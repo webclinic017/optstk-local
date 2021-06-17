@@ -1,10 +1,42 @@
 import pandas as pd
 
 
-def create_url(row):
-    final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-OPT/" + \
-        row['tradingsymbol'] + "/" + str(row['instrument_token'])
-    return final_url
+df = pd.read_csv(r'C:\Users\91956\Desktop\a.csv')
+
+ce = df
+pe = df
+
+statename = "INFY"
+
+ce = ce[(ce['url'].str.contains(statename) == True)
+        & (ce['instrument_type'] == 'CE')]
+ce_list = ce['url'].tolist()
+
+pe = pe[(pe['url'].str.contains(statename) == True)
+        & (pe['instrument_type'] == 'PE')]
+pe_list = pe['url'].tolist()
+
+for i in pe_list:
+    print(i)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def create_url(row):
+#     final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-OPT/" + \
+#         row['tradingsymbol'] + "/" + str(row['instrument_token'])
+#     return final_url
 
 # filename = r'C:\Users\91956\Desktop\instrument.csv'
 # df = pd.read_csv(filename)
@@ -25,9 +57,9 @@ def create_url(row):
 # print(lis2)
 # print(type(lis[0]))
 
-s1 = "https://kite.zerodha.com/chart/ext/tvc/NFO-OPT/MINDTREE21JUN1200CE/24558850"
+# s1 = "https://kite.zerodha.com/chart/ext/tvc/NFO-OPT/MINDTREE21JUN1200CE/24558850"
 
-print(s1.replace(s1[0:s1.find("JUN")+3],"")[:-9])
+# print(s1.replace(s1[0:s1.find("JUN")+3],"")[:-9])
 
 
 

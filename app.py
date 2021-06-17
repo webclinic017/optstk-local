@@ -17,7 +17,7 @@ def create_url(row):
 # df = pd.read_csv(filename)
 df = pd.read_csv('https://api.kite.trade/instruments')
 df = df[(df['segment'].str.contains("NFO-OPT") == True)]
-df = df[df['instrument_type'].str.contains("CE") == True]
+# df = df[df['instrument_type'].str.contains("CE") == True]
 df.drop(df[df['name'] == 'NIFTY'].index, inplace=True)
 df.drop(df[df['name'] == 'BANKNIFTY'].index, inplace=True)
 df.drop(df[df['name'] == 'FINNIFTY'].index, inplace=True)
@@ -26,7 +26,7 @@ print(ls[0])
 exp_date = ls[0]
 df.drop(df[df['expiry'] != exp_date].index, inplace=True)
 df['url'] = df.apply(lambda row: create_url(row), axis=1)
-# df = pd.read_csv(r'C:\Users\91956\Desktop\a.csv')
+# df.to_csv(r'C:\Users\91956\Desktop\a.csv')
 
 
 @app.route('/')
@@ -48,20 +48,28 @@ def home():
     return render_template('index.html',lis = lis)
 
 
-@app.route('/somework', methods=["GET", "POST"])
+@app.route('/get_strikes', methods=["GET", "POST"])
 def somework():
 
     global df
 
-    newdf = df
+    ce = df
+    pe = df
     if request.method == "POST":
         statename = request.form.get("statename")
         statename = str(statename)
         print(statename)    
 
-        newdf = newdf[(newdf['url'].str.contains(statename) == True)]
-        lis2 = newdf['url'].tolist()
-        return render_template('show.html', lis2=lis2)
+
+        ce = ce[(ce['url'].str.contains(statename) == True)
+                & (ce['instrument_type'] == 'CE')]
+        ce_list = ce['url'].tolist()
+
+        pe = pe[(pe['url'].str.contains(statename) == True)
+                & (pe['instrument_type'] == 'PE')]
+        pe_list = pe['url'].tolist()
+        
+        return render_template('show.html', ce_list=ce_list,pe_list=pe_list)
 
     return "hello"
 

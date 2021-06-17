@@ -49,11 +49,25 @@
  
 
     <table>
-        {%- for itemsa in lis2|batch(7) %}
+        {%- for itemsa in ce_list|batch(7) %}
         <tr>
             {% for item in itemsa %}
             <td>
                 <a href={{item}} target="_blank">{{ item.replace(item[0:item.find("JUN")+3],"")[:-9]  }}</a>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    <table>
+        {%- for itemsa in pe_list|batch(7) %}
+        <tr>
+            {% for item in itemsa %}
+            <td>
+                <a href={{item}} target="_blank">{{ item.replace(item[0:item.find("JUN")+3],"")[:-9] }}</a>
             </td>
             {% endfor %}
         </tr>
