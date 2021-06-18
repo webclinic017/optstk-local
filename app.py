@@ -16,6 +16,7 @@ def create_url(row):
 # filename = r'C:\Users\91956\Desktop\instrument.csv'
 # df = pd.read_csv(filename)
 df = pd.read_csv('https://api.kite.trade/instruments')
+df1 = df
 df = df[(df['segment'].str.contains("NFO-OPT") == True)]
 # df = df[df['instrument_type'].str.contains("CE") == True]
 df.drop(df[df['name'] == 'NIFTY'].index, inplace=True)
@@ -27,6 +28,18 @@ exp_date = ls[0]
 df.drop(df[df['expiry'] != exp_date].index, inplace=True)
 df['url'] = df.apply(lambda row: create_url(row), axis=1)
 # df.to_csv(r'C:\Users\91956\Desktop\a.csv')
+
+
+def create_url2(row):
+    final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-FUT/" + \
+        row['tradingsymbol'] + "/" + str(row['instrument_token'])
+    return final_url
+
+df1 = df1[(df1['segment'].str.contains("NFO-FUT") == True)]
+exp_date = '2021-06-24'
+df1.drop(df1[df1['expiry'] != exp_date].index, inplace=True)
+df1['url'] = df1.apply(lambda row: create_url2(row), axis=1)
+
 
 
 @app.route('/')
@@ -74,5 +87,27 @@ def somework():
     return "hello"
 
 
+@app.route('/get_fut', methods=["GET", "POST"])
+def fut():
+
+    global df1
+
+    df2 = df1
+    
+    statename = request.args.get('statename')
+    print(statename)
+   
+    ans = df2.loc[df2['url'].str.contains(statename, case=False)]
+    lis = ans['url'].tolist()
+    print(lis[0])
+    req_url = lis[0]
+
+    return redirect(req_url)
+
+    return "hello"
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# http://localhost:5000/abcd?user = 123
