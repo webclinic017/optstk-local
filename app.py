@@ -24,7 +24,8 @@ df.drop(df[df['name'] == 'BANKNIFTY'].index, inplace=True)
 df.drop(df[df['name'] == 'FINNIFTY'].index, inplace=True)
 ls = (df.expiry.unique())
 print(ls[0])
-exp_date = ls[0]
+# exp_date = ls[0]
+exp_date = '2021-07-29'
 df.drop(df[df['expiry'] != exp_date].index, inplace=True)
 df['url'] = df.apply(lambda row: create_url(row), axis=1)
 # df.to_csv(r'C:\Users\91956\Desktop\a.csv')
@@ -36,7 +37,7 @@ def create_url2(row):
     return final_url
 
 df1 = df1[(df1['segment'].str.contains("NFO-FUT") == True)]
-exp_date = '2021-06-24'
+exp_date = '2021-07-29'
 df1.drop(df1[df1['expiry'] != exp_date].index, inplace=True)
 df1['url'] = df1.apply(lambda row: create_url2(row), axis=1)
 
