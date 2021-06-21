@@ -107,6 +107,28 @@ def fut():
 
     return "hello"
 
+
+@app.route('/get_opt', methods=["GET", "POST"])
+def opt():
+    global df
+
+    ce = df
+    pe = df
+  
+    statename = request.args.get('statename')
+    print(statename)
+   
+    ce = ce[(ce['url'].str.contains(statename) == True)
+            & (ce['instrument_type'] == 'CE')]
+    ce_list = ce['url'].tolist()
+
+    pe = pe[(pe['url'].str.contains(statename) == True)
+            & (pe['instrument_type'] == 'PE')]
+    pe_list = pe['url'].tolist()
+
+    return render_template('show.html', ce_list=ce_list, pe_list=pe_list)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
