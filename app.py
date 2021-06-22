@@ -117,6 +117,7 @@ def opt():
   
     statename = request.args.get('statename')
     print(statename)
+    
    
     ce = ce[(ce['url'].str.contains(statename) == True)
             & (ce['instrument_type'] == 'CE')]
@@ -125,6 +126,41 @@ def opt():
     pe = pe[(pe['url'].str.contains(statename) == True)
             & (pe['instrument_type'] == 'PE')]
     pe_list = pe['url'].tolist()
+
+    return render_template('show.html', ce_list=ce_list, pe_list=pe_list)
+
+
+
+
+@app.route('/req_opt', methods=["GET", "POST"])
+def reqopt():
+    global df
+
+    ce = df
+    pe = df
+  
+    statename = request.args.get('statename')
+    ltp = request.args.get('ltp')
+    print(statename)
+    print(ltp)
+    
+    ltp = int(float(ltp))
+   
+    ce = ce[(ce['url'].str.contains(statename) == True)
+            & (ce['instrument_type'] == 'CE')]
+    # ce_list = ce['url'].tolist()
+    idx = ce['strike'].lt(ltp).argmin()
+    out = ce['url'].iloc[max(idx-4, 0):min(idx+4, len(df))]
+    ce_list = out.tolist()
+    print(ce_list)
+
+    pe = pe[(pe['url'].str.contains(statename) == True)
+            & (pe['instrument_type'] == 'PE')]
+    # pe_list = pe['url'].tolist()
+    idx = pe['strike'].lt(ltp).argmin()
+    out = pe['url'].iloc[max(idx-4, 0):min(idx+3, len(df))]
+    pe_list = out.tolist()
+    print(pe_list)
 
     return render_template('show.html', ce_list=ce_list, pe_list=pe_list)
 
