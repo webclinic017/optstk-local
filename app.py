@@ -8,14 +8,33 @@ app = Flask(__name__)
 # in show.html need to change month in each table
 exp_date_zerodha = '2021-08-26'  
 
-
+df = pd.read_csv('https://api.kite.trade/instruments')
 
 def create_url_for_options(row):
     final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-OPT/" + \
         row['tradingsymbol'] + "/" + str(row['instrument_token'])
     return final_url
 
-df = pd.read_csv('https://api.kite.trade/instruments')
+def create_url_for_spot(row):
+    final_url = "https://kite.zerodha.com/chart/ext/tvc/NSE/" + \
+        row['tradingsymbol'] + "/" + str(row['instrument_token'])
+    return final_url
+
+def create_url_for_futures(row):
+    final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-FUT/" + \
+        row['tradingsymbol'] + "/" + str(row['instrument_token'])
+    return final_url
+
+
+spot_df = df
+spot_df = spot_df[(spot_df['instrument_type'].str.contains("EQ") == True)]
+spot_df.drop(spot_df[spot_df['segment'] == 'BCD'].index, inplace=True)
+spot_df.drop(spot_df[spot_df['segment'] == 'BSE'].index, inplace=True)
+spot_df.drop(spot_df[spot_df['segment'] == 'INDICES'].index, inplace=True)
+spot_df['url'] = df.apply(lambda row: create_url_for_spot(row), axis=1)
+spot_df.to_csv("abcd.csv")
+
+
 # df1 is for futures
 df1 = df
 df = df[(df['segment'].str.contains("NFO-OPT") == True)]
@@ -29,10 +48,6 @@ df.drop(df[df['expiry'] != exp_date_zerodha].index, inplace=True)
 df['url'] = df.apply(lambda row: create_url_for_options(row), axis=1)
 
 
-def create_url_for_futures(row):
-    final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-FUT/" + \
-        row['tradingsymbol'] + "/" + str(row['instrument_token'])
-    return final_url
 
 df1 = df1[(df1['segment'].str.contains("NFO-FUT") == True)]
 df1.drop(df1[df1['expiry'] != exp_date_zerodha].index, inplace=True)
@@ -91,6 +106,27 @@ def fut():
     global df1
 
     df2 = df1
+    
+    statename = request.args.get('statename')
+    print(statename)
+   
+    ans = df2.loc[df2['url'].str.contains(statename, case=False)]
+    lis = ans['url'].tolist()
+    print(lis[0])
+    req_url = lis[0]
+
+    return redirect(req_url)
+
+    return "hello"
+
+
+
+@app.route('/get_spot', methods=["GET", "POST"])
+def spot():
+
+    global spot_df
+
+    df2 = spot_df
     
     statename = request.args.get('statename')
     print(statename)
