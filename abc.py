@@ -2,7 +2,8 @@ import pandas as pd
 
 
 filename = r"C:\Users\91956\Desktop\abcd.csv"
-statename = "IOC"
+statename = "hdfcbank"
+statename = statename.upper()
 df = pd.read_csv(filename)
 ans = df.loc[df['tradingsymbol'] == statename]
 ans = ans['url'].tolist()

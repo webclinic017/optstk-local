@@ -110,7 +110,7 @@ def fut():
     statename = request.args.get('statename')
     print(statename)
     
-    ans = df.loc[df['tradingsymbol'] == statename]
+    ans = df2.loc[df2['name'] == statename]
     ans = ans['url'].tolist()
     ans = ans[0]
     req_url = ans
@@ -130,9 +130,12 @@ def spot():
     
     statename = request.args.get('statename')
     print(statename)
+    statename = statename.upper()
    
-    ans = df.loc[df['tradingsymbol'] == statename]
+    ans = df2.loc[df2['tradingsymbol'] == statename]
     ans = ans['url'].tolist()
+    print("created ans is ")
+    print(ans)
     ans = ans[0]
     req_url = ans
 
