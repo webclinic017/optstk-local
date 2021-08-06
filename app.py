@@ -111,6 +111,7 @@ def fut():
     print(statename)
    
     ans = df2.loc[df2['url'].str.contains(statename, case=False)]
+    ans.drop(ans[ans['tradingsymbol'] != statename].index, inplace=True)
     lis = ans['url'].tolist()
     print(lis[0])
     req_url = lis[0]
@@ -132,6 +133,7 @@ def spot():
     print(statename)
    
     ans = df2.loc[df2['url'].str.contains(statename, case=False)]
+    ans.drop(ans[ans['tradingsymbol'] != statename].index, inplace=True)
     lis = ans['url'].tolist()
     print(lis[0])
     req_url = lis[0]
