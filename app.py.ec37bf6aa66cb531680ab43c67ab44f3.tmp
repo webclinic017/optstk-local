@@ -109,7 +109,8 @@ def fut():
     
     statename = request.args.get('statename')
     print(statename)
-    statename = statename.upper()    
+        statename = statename.upper()
+    
     ans = df2.loc[df2['name'] == statename]
     ans = ans['url'].tolist()
     ans = ans[0]
