@@ -1,14 +1,41 @@
 import pandas as pd
 from flask import Flask, render_template, redirect, request, session
-
+import datetime
 
 app = Flask(__name__)
 
-# stuff that needs to be manually changed
-# in show.html need to change month in each table
-exp_date_zerodha = '2021-08-26'  
-
 df = pd.read_csv('https://api.kite.trade/instruments')
+
+
+# find near month expiry date and month  
+dic  = {
+    "01" : "JAN",
+    "02" : "FEB",
+    "03" : "MAR",
+    "04" : "APR",
+    "05" : "MAY",    
+    "06" : "JUN",
+    "07" : "JUL",
+    "08" : "AUG",
+    "09" : "SEP",
+    "10" : "OCT",
+    "11" : "NOV",
+    "12" : "DEC",    
+}
+
+dff = df
+dff = dff[(dff['segment'].str.contains("NFO-FUT") == True)]
+dff.drop(dff[dff['name'] != 'NIFTY'].index, inplace=True)
+lis = dff['expiry'].to_list()
+d_lis = []
+for i in lis:
+    d_lis.append(datetime.datetime.strptime(i,'%Y-%m-%d'))
+
+exp_date_zerodha = min(d_lis).strftime('%Y-%m-%d')
+month = exp_date_zerodha[5:7]
+month_str = dic[month]
+
+
 
 def create_url_for_options(row):
     final_url = "https://kite.zerodha.com/chart/ext/tvc/NFO-OPT/" + \
@@ -95,7 +122,7 @@ def somework():
                 & (pe['instrument_type'] == 'PE')]
         pe_list = pe['url'].tolist()
         
-        return render_template('show.html', ce_list=ce_list,pe_list=pe_list)
+        return render_template('show.html', ce_list=ce_list,pe_list=pe_list,month = month_str)
 
     return "hello"
 
@@ -163,7 +190,7 @@ def opt():
             & (pe['instrument_type'] == 'PE')]
     pe_list = pe['url'].tolist()
 
-    return render_template('show.html', ce_list=ce_list, pe_list=pe_list)
+    return render_template('show.html', ce_list=ce_list, pe_list=pe_list,month = month_str)
 
 
 
@@ -198,7 +225,7 @@ def reqopt():
     pe_list = out.tolist()
     print(pe_list)
 
-    return render_template('show.html', ce_list=ce_list, pe_list=pe_list)
+    return render_template('show.html', ce_list=ce_list, pe_list=pe_list,month = month_str)
 
 
 if __name__ == '__main__':
