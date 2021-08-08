@@ -1,11 +1,13 @@
 import pandas as pd
 from flask import Flask, render_template, redirect, request, session
 import datetime
+import json
 
 app = Flask(__name__)
 
 df = pd.read_csv('https://api.kite.trade/instruments')
 
+curr_watch = []
 
 # find near month expiry date and month  
 dic  = {
@@ -150,25 +152,29 @@ def fut():
 
 @app.route('/get_spot', methods=["GET", "POST"])
 def spot():
-
     global spot_df
-
     df2 = spot_df
+    global curr_watch
+    stocklist = []
     
-    statename = request.args.get('statename')
-    print(statename)
-    statename = statename.upper()
-   
-    ans = df2.loc[df2['tradingsymbol'] == statename]
-    ans = ans['url'].tolist()
-    print("created ans is ")
-    print(ans)
-    ans = ans[0]
-    req_url = ans
-
-    return redirect(req_url)
-
-    return "hello"
+    statenames = request.args.get('statename')
+    print(type(statenames))
+    statenames = statenames.upper()
+    print(type(statenames))
+    statenames = statenames.split("AND")
+    print(type(statenames))
+    for statename in statenames:
+        if statename not in curr_watch:
+            curr_watch.append(statename)
+            ans = df2.loc[df2['tradingsymbol'] == statename]
+            if ans.empty:
+                pass
+            else:
+                ans = ans['url'].tolist()
+                ans = ans[0]
+                stocklist.append(ans)
+            
+    return render_template('links.html', stocklist = (stocklist))
 
 
 @app.route('/get_opt', methods=["GET", "POST"])
