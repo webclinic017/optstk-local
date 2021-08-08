@@ -68,6 +68,10 @@
     <script>
         var stocklist =  {{stocklist|tojson|safe}};
         console.log(stocklist)
+             if(stocklist.length === 0)
+        {
+            window.close();
+        }
         for (let i = 0; i < stocklist.length; i++) {
                 // console.log(stocklist[i]);
                 window.open(stocklist[i], '_blank');
